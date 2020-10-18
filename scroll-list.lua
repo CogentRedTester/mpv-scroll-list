@@ -6,15 +6,21 @@ local overlay = {
     ass = ass,
     header = "header \\N ----------------------------------------------",
     header_style = [[{\q2\fs35\c&00ccff&}]],
+
+    list = {},
     list_style = [[{\q2\fs25\c&Hffffff&}]],
     wrapper_style = [[{\c&00ccff&\fs16}]],
-    num_entries = 10,
+
+    cursor = [[➤  ]],
+    indent = [[   ]],
+    cursor_style = [[{\c&00ccff&}]],
+    selected_style = [[{\c&Hfce788&}]],
+
+    num_entries = 16,
     selected = 1,
-    list = {},
-    keybinds = {
-        {'DOWN', 'scroll_down', function() scroll_down() end, {repeatable = true}},
-        {'UP', 'scroll_up', function() scroll_up() end, {repeatable = true}}
-    },
+    empty_text = "empty list",
+
+    keybinds = {},
 
     --appends the entered text to the overlay
     append = function(this, text)
@@ -34,18 +40,56 @@ local overlay = {
 
     --refreshes the ass text using the contents of the list
     update_ass = function(this)
+        this.ass.data = ""
         this:append(this.header_style)
         this:append(this.header)
         this:newline()
 
-        for i = 1, #this.list do
-            local item = this.list[i]
+        if #this.list < 1 then
+            this:append(this.empty_text)
+            this:update()
+            return
+        end
+
+        this:append(this.list_style)
+        local start = 1
+        local finish = start+this.num_entries-1
+
+        --handling cursor positioning
+        local mid = math.ceil(this.num_entries/2)+1
+        if this.selected+mid > finish then
+            local offset = this.selected - finish + mid
+
+            --if we've overshot the end of the list then undo some of the offset
+            if finish + offset > #this.list then
+                offset = offset - ((finish+offset) - #this.list)
+            end
+
+            start = start + offset
+            finish = finish + offset
+        end
+
+        --making sure that we don't overstep the boundaries
+        if start < 1 then start = 1 end
+        local overflow = finish < #this.list
+        --this is necessary when the number of items in the dir is less than the max
+        if not overflow then finish = #this.list end
+
+        --adding a header to show there are items above in the list
+        if start > 1 then this:append(this.wrapper_style..(start-1)..' item(s) above\\N\\N') end
+
+        for i=start, finish do
+            local v = this.list[i]
             this:append(this.list_style)
-            this:append(item.style)
-            this:append(item.text)
+
+            if i == this.selected then this:append(this.cursor_style..this.cursor..this.selected_style)
+            else this:append(this.indent) end
+
+            this:append(v.text)
             this:newline()
         end
 
+        if overflow then this:append('\\N'..this.wrapper_style..#this.list-finish..' item(s) remaining') end
         this:update()
     end,
 
@@ -84,6 +128,11 @@ local overlay = {
         this.ass.hidden = true
         this.ass:remove()
     end
+}
+
+overlay.keybinds = {
+    {'DOWN', 'scroll_down', function() overlay:scroll_down() end, {repeatable = true}},
+    {'UP', 'scroll_up', function() overlay:scroll_up() end, {repeatable = true}}
 }
 
 return overlay
