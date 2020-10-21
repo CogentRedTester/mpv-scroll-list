@@ -1,9 +1,10 @@
 local mp = require 'mp'
-local ass = mp.create_osd_overlay('ass-events')
-ass.hidden = true
 
 local overlay = {
-    ass = ass,
+    ass = mp.create_osd_overlay('ass-events'),
+    hidden = true,
+    flag_update = true,
+
     header = "header \\N ----------------------------------------------",
     header_style = [[{\q2\fs35\c&00ccff&}]],
 
@@ -18,7 +19,8 @@ local overlay = {
 
     num_entries = 16,
     selected = 1,
-    empty_text = "empty list",
+    wrap = false,
+    empty_text = "no entries",
 
     keybinds = {},
 
@@ -33,9 +35,11 @@ local overlay = {
         this.ass.data = this.ass.data .. '\\N'
     end,
 
-    --force osd update - wrapper for ass:update
+    --re-parses the list into an ass string
+    --if the list is closed then it flags an update on the next open
     update = function(this)
-        this.ass:update()
+        if this.hidden then this.flag_update = true
+        else this:update_ass() end
     end,
 
     --refreshes the ass text using the contents of the list
@@ -90,13 +94,16 @@ local overlay = {
         end
 
         if overflow then this:append('\\N'..this.wrapper_style..#this.list-finish..' item(s) remaining') end
-        this:update()
+        this.ass:update()
     end,
 
     --moves the selector down the list
     scroll_down = function (this)
         if this.selected < #this.list then
             this.selected = this.selected + 1
+            this:update_ass()
+        elseif this.wrap then
+            this.selected = 1
             this:update_ass()
         end
     end,
@@ -105,6 +112,9 @@ local overlay = {
     scroll_up = function (this)
         if this.selected > 1 then
             this.selected = this.selected - 1
+            this:update_ass()
+        elseif this.wrap then
+            this.selected = #this.list
             this:update_ass()
         end
     end,
@@ -115,8 +125,9 @@ local overlay = {
             mp.add_forced_key_binding(v[1], 'dynamic/'..v[2], v[3], v[4])
         end
 
-        this.ass.hidden = false
-        this:update_ass()
+        this.hidden = false
+        if not this.flag_update then this.ass:update()
+        else this.flag_update = false ; this:update_ass() end
     end,
 
     --closes the list
@@ -125,7 +136,7 @@ local overlay = {
             mp.remove_key_binding('dynamic/'..v[2])
         end
 
-        this.ass.hidden = true
+        this.hidden = true
         this.ass:remove()
     end
 }
