@@ -137,7 +137,7 @@ local overlay = {
     --opens the list
     open = function(this)
         for _,v in ipairs(this.keybinds) do
-            mp.add_forced_key_binding(v[1], 'dynamic/'..v[2], v[3], v[4])
+            mp.add_forced_key_binding(v[1], 'dynamic/'..this.ass.id..'/'..v[2], v[3], v[4])
         end
 
         this.hidden = false
@@ -148,7 +148,7 @@ local overlay = {
     --closes the list
     close = function(this)
         for _,v in ipairs(this.keybinds) do
-            mp.remove_key_binding('dynamic/'..v[2])
+            mp.remove_key_binding('dynamic/'..this.ass.id..'/'..v[2])
         end
 
         this.hidden = true
