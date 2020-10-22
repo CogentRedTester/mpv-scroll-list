@@ -66,7 +66,7 @@ local overlay = {
 
         if #this.list < 1 then
             this:append(this.empty_text)
-            this:update()
+            this.ass:update()
             return
         end
 
@@ -164,7 +164,8 @@ local overlay = {
 
 overlay.keybinds = {
     {'DOWN', 'scroll_down', function() overlay:scroll_down() end, {repeatable = true}},
-    {'UP', 'scroll_up', function() overlay:scroll_up() end, {repeatable = true}}
+    {'UP', 'scroll_up', function() overlay:scroll_up() end, {repeatable = true}},
+    {'ESC', 'close_browser', function() overlay:close() end, {}}
 }
 
 return overlay
