@@ -26,7 +26,7 @@ local overlay = {
 
     --formats strings for ass handling
     --this function is taken from https://github.com/mpv-player/mpv/blob/master/player/lua/console.lua#L110
-    ass_escape = function(_, str)
+    ass_escape = function(str)
         str = str:gsub('\\', '\\\239\187\191')
         str = str:gsub('{', '\\{')
         str = str:gsub('}', '\\}')
