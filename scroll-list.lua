@@ -138,6 +138,12 @@ local overlay = {
 
         this.hidden = true
         this.ass:remove()
+    end,
+
+    --toggles the list
+    toggle = function(this)
+        if this.hidden then this:open()
+        else this:close() end
     end
 }
 
