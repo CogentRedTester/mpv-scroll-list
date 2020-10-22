@@ -24,6 +24,21 @@ local overlay = {
 
     keybinds = {},
 
+    --formats strings for ass handling
+    --this function is taken from https://github.com/mpv-player/mpv/blob/master/player/lua/console.lua#L110
+    ass_escape = function(_, str)
+        str = str:gsub('\\', '\\\239\187\191')
+        str = str:gsub('{', '\\{')
+        str = str:gsub('}', '\\}')
+        -- Precede newlines with a ZWNBSP to prevent ASS's weird collapsing of
+        -- consecutive newlines
+        str = str:gsub('\n', '\239\187\191\\N')
+        -- Turn leading spaces into hard spaces to prevent ASS from stripping them
+        str = str:gsub('\\N ', '\\N\\h')
+        str = str:gsub('^ ', '\\h')
+        return str
+    end,
+
     --appends the entered text to the overlay
     append = function(this, text)
         if text == nil then return end
