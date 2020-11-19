@@ -27,8 +27,8 @@ local overlay = {
     list_style = [[{\q2\fs25\c&Hffffff&}]],
     wrapper_style = [[{\c&00ccff&\fs16}]],
 
-    cursor = [[➤  ]],
-    indent = [[   ]],
+    cursor = [[➤\h]],
+    indent = [[\h\h\h\h]],
     cursor_style = [[{\c&00ccff&}]],
     selected_style = [[{\c&Hfce788&}]],
 
@@ -60,7 +60,7 @@ local overlay = {
     end,
 
     --prints the header to the overlay
-    print_header = function(this)
+    format_header = function(this)
         this:append(this.header_style)
         this:append(this.header)
         this:newline()
@@ -81,7 +81,7 @@ local overlay = {
     --refreshes the ass text using the contents of the list
     update_ass = function(this)
         this.ass.data = ""
-        this:print_header()
+        this:format_header()
 
         if #this.list < 1 then
             this:append(this.empty_text)
