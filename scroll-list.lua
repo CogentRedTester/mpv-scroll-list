@@ -147,13 +147,13 @@ local overlay = {
 
     --opens the list
     open = function(this)
-        for _,v in ipairs(this.keybinds) do
-            mp.add_forced_key_binding(v[1], 'dynamic/'..this.ass.id..'/'..v[2], v[3], v[4])
-        end
-
         this.hidden = false
         if not this.flag_update then this.ass:update()
         else this.flag_update = false ; this:update_ass() end
+
+        for _,v in ipairs(this.keybinds) do
+            mp.add_forced_key_binding(v[1], 'dynamic/'..this.ass.id..'/'..v[2], v[3], v[4])
+        end
     end,
 
     --closes the list
