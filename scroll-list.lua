@@ -59,12 +59,29 @@ local overlay = {
         else this:update_ass() end
     end,
 
-    --refreshes the ass text using the contents of the list
-    update_ass = function(this)
-        this.ass.data = ""
+    --prints the header to the overlay
+    print_header = function(this)
         this:append(this.header_style)
         this:append(this.header)
         this:newline()
+    end,
+
+    --formats each line of the list and prints it to the overlay
+    format_line = function(this, index, item)
+        this:append(this.list_style)
+
+        if index == this.selected then this:append(this.cursor_style..this.cursor..this.selected_style)
+        else this:append(this.indent) end
+
+        this:append(item.style)
+        this:append(item.ass)
+        this:newline()
+    end,
+
+    --refreshes the ass text using the contents of the list
+    update_ass = function(this)
+        this.ass.data = ""
+        this:print_header()
 
         if #this.list < 1 then
             this:append(this.empty_text)
@@ -72,7 +89,6 @@ local overlay = {
             return
         end
 
-        this:append(this.list_style)
         local start = 1
         local finish = start+this.num_entries-1
 
@@ -100,15 +116,7 @@ local overlay = {
         if start > 1 then this:append(this.wrapper_style..(start-1)..' item(s) above\\N\\N') end
 
         for i=start, finish do
-            local v = this.list[i]
-            this:append(this.list_style)
-
-            if i == this.selected then this:append(this.cursor_style..this.cursor..this.selected_style)
-            else this:append(this.indent) end
-
-            this:append(v.style)
-            this:append(v.ass)
-            this:newline()
+            this:format_line(i, this.list[i])
         end
 
         if overflow then this:append('\\N'..this.wrapper_style..#this.list-finish..' item(s) remaining') end
