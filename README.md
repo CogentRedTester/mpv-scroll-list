@@ -32,6 +32,7 @@ The following variables are provided to modify the behaviour of the list.
 
 | Variable       | Description                                           | Default                                                     |
 |----------------|-------------------------------------------------------|-------------------------------------------------------------|
+| global_style   | An ass string prepended to the start of the overlay   | empty
 | header         | The string to print as the header                     | `header \\N ----------------------------------------------` |
 | header_style   | The ass tag used to format the header                 | `{\q2\fs35\c&00ccff&}`                                      |
 | list           | Array of item objects                                 | empty                                                       |

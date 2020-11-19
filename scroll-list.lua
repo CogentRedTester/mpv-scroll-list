@@ -20,6 +20,8 @@ local overlay = {
     hidden = true,
     flag_update = true,
 
+    global_style = [[]],
+
     header = "header \\N ----------------------------------------------",
     header_style = [[{\q2\fs35\c&00ccff&}]],
 
@@ -80,7 +82,7 @@ local overlay = {
 
     --refreshes the ass text using the contents of the list
     update_ass = function(this)
-        this.ass.data = ""
+        this.ass.data = this.global_style
         this:format_header()
 
         if #this.list < 1 then
