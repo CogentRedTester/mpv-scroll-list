@@ -106,6 +106,7 @@ local overlay = {
             if i == this.selected then this:append(this.cursor_style..this.cursor..this.selected_style)
             else this:append(this.indent) end
 
+            this:append(v.style)
             this:append(v.ass)
             this:newline()
         end
