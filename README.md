@@ -13,8 +13,8 @@ For more advanced users you can also modify the `LUA_PATH` environment variable.
 Importing the module in such a way as to respect the above settings can be done with the following code:
 
 ```
-package.path = (mp.get_opt("scroll_list-directory") or mp.command_native({'expand-path', '~~/scripts'})) .. '/?.lua;' .. package.path
-local list = require 'scroll-list'
+package.path = mp.command_native( {"expand-path", (mp.get_opt("scroll_list-directory") or "~~/scripts") } ) .. "/?.lua;" .. package.path
+local list = require "scroll-list"
 ```
 
 The list variable then contains a table that represents a single scroll-list object. A script can maintain multiple distinct lists by simply using `require 'scroll-list` again.
