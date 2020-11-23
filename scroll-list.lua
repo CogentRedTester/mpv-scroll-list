@@ -147,25 +147,43 @@ local overlay = {
         end
     end,
 
-    --opens the list
-    open = function(this)
-        this.hidden = false
-        if not this.flag_update then this.ass:update()
-        else this.flag_update = false ; this:update_ass() end
-
+    --adds the forced keybinds
+    add_keybinds = function(this)
         for _,v in ipairs(this.keybinds) do
             mp.add_forced_key_binding(v[1], 'dynamic/'..this.ass.id..'/'..v[2], v[3], v[4])
         end
     end,
 
-    --closes the list
-    close = function(this)
+    --removes the forced keybinds
+    remove_keybinds = function(this)
         for _,v in ipairs(this.keybinds) do
             mp.remove_key_binding('dynamic/'..this.ass.id..'/'..v[2])
         end
+    end,
 
+    --opens the list and sets the hidden flag
+    open_list = function(this)
+        this.hidden = false
+        if not this.flag_update then this.ass:update()
+        else this.flag_update = false ; this:update_ass() end
+    end,
+
+    --closes the list and sets the hidden flag
+    close_list = function(this)
         this.hidden = true
         this.ass:remove()
+    end,
+
+    --modifiable function that opens the list
+    open = function(this)
+        this:open_list()
+        this:add_keybinds()
+    end,
+
+    --modifiable function that closes the list
+    close = function(this)
+        this:remove_keybinds()
+        this:close_list()
     end,
 
     --toggles the list

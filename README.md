@@ -72,18 +72,26 @@ These methods must all be run using `object:function()` syntax so that they act 
 | scroll_up()   | move cursor up                              |
 
 #### Methods designed to be replaceable for custom behaviour:
+Changing these can break the script if certain function calls are missing. Make sure to check the defaults.
 
 | Method                   | Description                                                                                                                    |
 |--------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | format_header()          | formats and prints the header to the overlay                                                                                   |
 | format_line(index, item) | formats the ass string for the given `item` at list position `index` - this handles the cursor, indents, styles and newlines.  |
+| open()                   | is called by `toggle` - runs the functions required when opening the list                                                      |
+| close()                  | is called by `toggle` - runs the functions required when closing the list                                                      |
 
 #### Methods to support custom functions:
+Generally these shouldn't be changed.
 
-| Method       | Description                                                                        |
-|--------------|------------------------------------------------------------------------------------|
-| append(str)  | appends the string `str` to the ass overlay - if text is nil then it safely exits  |
-| newline()    | alias for `append("\\N")`                                                          |
+| Method            | Description                                                                        |
+|-------------------|------------------------------------------------------------------------------------|
+| append(str)       | appends the string `str` to the ass overlay - if text is nil then it safely exits  |
+| newline()         | alias for `append("\\N")`                                                          |
+| add_keybinds()    | adds the keybinds defined in the `keybinds` variable - used by `open`              |
+| remove_keybinds() | removes the defined keybinds - used by `close`                                     |
+| open_list()       | sends the ass update command and manages the hidden flag - used by `open`          |
+| close_list()      | sends the ass remove command and manages the hidden flag - used by `close`         |
 
 #### Internally used methods (for reference):
 
