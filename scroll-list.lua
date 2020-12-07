@@ -44,64 +44,64 @@ local overlay = {
     ass_escape = ass_escape,
 
     --appends the entered text to the overlay
-    append = function(this, text)
+    append = function(self, text)
         if text == nil then return end
-        this.ass.data = this.ass.data .. text
+        self.ass.data = self.ass.data .. text
     end,
 
     --appends a newline character to the osd
-    newline = function(this)
-        this.ass.data = this.ass.data .. '\\N'
+    newline = function(self)
+        self.ass.data = self.ass.data .. '\\N'
     end,
 
     --re-parses the list into an ass string
     --if the list is closed then it flags an update on the next open
-    update = function(this)
-        if this.hidden then this.flag_update = true
-        else this:update_ass() end
+    update = function(self)
+        if self.hidden then self.flag_update = true
+        else self:update_ass() end
     end,
 
     --prints the header to the overlay
-    format_header = function(this)
-        this:append(this.header_style)
-        this:append(this.header)
-        this:newline()
+    format_header = function(self)
+        self:append(self.header_style)
+        self:append(self.header)
+        self:newline()
     end,
 
     --formats each line of the list and prints it to the overlay
-    format_line = function(this, index, item)
-        this:append(this.list_style)
+    format_line = function(self, index, item)
+        self:append(self.list_style)
 
-        if index == this.selected then this:append(this.cursor_style..this.cursor..this.selected_style)
-        else this:append(this.indent) end
+        if index == self.selected then self:append(self.cursor_style..self.cursor..self.selected_style)
+        else self:append(self.indent) end
 
-        this:append(item.style)
-        this:append(item.ass)
-        this:newline()
+        self:append(item.style)
+        self:append(item.ass)
+        self:newline()
     end,
 
     --refreshes the ass text using the contents of the list
-    update_ass = function(this)
-        this.ass.data = this.global_style
-        this:format_header()
+    update_ass = function(self)
+        self.ass.data = self.global_style
+        self:format_header()
 
-        if #this.list < 1 then
-            this:append(this.empty_text)
-            this.ass:update()
+        if #self.list < 1 then
+            self:append(self.empty_text)
+            self.ass:update()
             return
         end
 
         local start = 1
-        local finish = start+this.num_entries-1
+        local finish = start+self.num_entries-1
 
         --handling cursor positioning
-        local mid = math.ceil(this.num_entries/2)+1
-        if this.selected+mid > finish then
-            local offset = this.selected - finish + mid
+        local mid = math.ceil(self.num_entries/2)+1
+        if self.selected+mid > finish then
+            local offset = self.selected - finish + mid
 
             --if we've overshot the end of the list then undo some of the offset
-            if finish + offset > #this.list then
-                offset = offset - ((finish+offset) - #this.list)
+            if finish + offset > #self.list then
+                offset = offset - ((finish+offset) - #self.list)
             end
 
             start = start + offset
@@ -110,86 +110,86 @@ local overlay = {
 
         --making sure that we don't overstep the boundaries
         if start < 1 then start = 1 end
-        local overflow = finish < #this.list
+        local overflow = finish < #self.list
         --this is necessary when the number of items in the dir is less than the max
-        if not overflow then finish = #this.list end
+        if not overflow then finish = #self.list end
 
         --adding a header to show there are items above in the list
-        if start > 1 then this:append(this.wrapper_style..(start-1)..' item(s) above\\N\\N') end
+        if start > 1 then self:append(self.wrapper_style..(start-1)..' item(s) above\\N\\N') end
 
         for i=start, finish do
-            this:format_line(i, this.list[i])
+            self:format_line(i, self.list[i])
         end
 
-        if overflow then this:append('\\N'..this.wrapper_style..#this.list-finish..' item(s) remaining') end
-        this.ass:update()
+        if overflow then self:append('\\N'..self.wrapper_style..#self.list-finish..' item(s) remaining') end
+        self.ass:update()
     end,
 
     --moves the selector down the list
-    scroll_down = function (this)
-        if this.selected < #this.list then
-            this.selected = this.selected + 1
-            this:update_ass()
-        elseif this.wrap then
-            this.selected = 1
-            this:update_ass()
+    scroll_down = function (self)
+        if self.selected < #self.list then
+            self.selected = self.selected + 1
+            self:update_ass()
+        elseif self.wrap then
+            self.selected = 1
+            self:update_ass()
         end
     end,
 
     --moves the selector up the list
-    scroll_up = function (this)
-        if this.selected > 1 then
-            this.selected = this.selected - 1
-            this:update_ass()
-        elseif this.wrap then
-            this.selected = #this.list
-            this:update_ass()
+    scroll_up = function (self)
+        if self.selected > 1 then
+            self.selected = self.selected - 1
+            self:update_ass()
+        elseif self.wrap then
+            self.selected = #self.list
+            self:update_ass()
         end
     end,
 
     --adds the forced keybinds
-    add_keybinds = function(this)
-        for _,v in ipairs(this.keybinds) do
-            mp.add_forced_key_binding(v[1], 'dynamic/'..this.ass.id..'/'..v[2], v[3], v[4])
+    add_keybinds = function(self)
+        for _,v in ipairs(self.keybinds) do
+            mp.add_forced_key_binding(v[1], 'dynamic/'..self.ass.id..'/'..v[2], v[3], v[4])
         end
     end,
 
     --removes the forced keybinds
-    remove_keybinds = function(this)
-        for _,v in ipairs(this.keybinds) do
-            mp.remove_key_binding('dynamic/'..this.ass.id..'/'..v[2])
+    remove_keybinds = function(self)
+        for _,v in ipairs(self.keybinds) do
+            mp.remove_key_binding('dynamic/'..self.ass.id..'/'..v[2])
         end
     end,
 
     --opens the list and sets the hidden flag
-    open_list = function(this)
-        this.hidden = false
-        if not this.flag_update then this.ass:update()
-        else this.flag_update = false ; this:update_ass() end
+    open_list = function(self)
+        self.hidden = false
+        if not self.flag_update then self.ass:update()
+        else self.flag_update = false ; self:update_ass() end
     end,
 
     --closes the list and sets the hidden flag
-    close_list = function(this)
-        this.hidden = true
-        this.ass:remove()
+    close_list = function(self)
+        self.hidden = true
+        self.ass:remove()
     end,
 
     --modifiable function that opens the list
-    open = function(this)
-        this:open_list()
-        this:add_keybinds()
+    open = function(self)
+        self:open_list()
+        self:add_keybinds()
     end,
 
     --modifiable function that closes the list
-    close = function(this)
-        this:remove_keybinds()
-        this:close_list()
+    close = function(self)
+        self:remove_keybinds()
+        self:close_list()
     end,
 
     --toggles the list
-    toggle = function(this)
-        if this.hidden then this:open()
-        else this:close() end
+    toggle = function(self)
+        if self.hidden then self:open()
+        else self:close() end
     end
 }
 
