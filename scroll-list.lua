@@ -1,9 +1,19 @@
 local mp = require 'mp'
-local methods = {}
+local scroll_list = {
+    global_style = [[]],
+    header_style = [[{\q2\fs35\c&00ccff&}]],
+    list_style = [[{\q2\fs25\c&Hffffff&}]],
+    wrapper_style = [[{\c&00ccff&\fs16}]],
+    cursor_style = [[{\c&00ccff&}]],
+    selected_style = [[{\c&Hfce788&}]],
+    num_entries = 16,
+    wrap = false,
+    empty_text = "no entries"
+}
 
 --formats strings for ass handling
 --this function is taken from https://github.com/mpv-player/mpv/blob/master/player/lua/console.lua#L110
-function methods.ass_escape(str)
+function scroll_list.ass_escape(str)
     str = str:gsub('\\', '\\\239\187\191')
     str = str:gsub('{', '\\{')
     str = str:gsub('}', '\\}')
@@ -16,32 +26,32 @@ function methods.ass_escape(str)
     return str
 end
 --appends the entered text to the overlay
-function methods:append(text)
+function scroll_list:append(text)
         if text == nil then return end
         self.ass.data = self.ass.data .. text
     end
 
 --appends a newline character to the osd
-function methods:newline()
+function scroll_list:newline()
     self.ass.data = self.ass.data .. '\\N'
 end
 
 --re-parses the list into an ass string
 --if the list is closed then it flags an update on the next open
-function methods:update()
+function scroll_list:update()
     if self.hidden then self.flag_update = true
     else self:update_ass() end
 end
 
 --prints the header to the overlay
-function methods:format_header()
+function scroll_list:format_header()
     self:append(self.header_style)
     self:append(self.header)
     self:newline()
 end
 
 --formats each line of the list and prints it to the overlay
-function methods:format_line(index, item)
+function scroll_list:format_line(index, item)
     self:append(self.list_style)
 
     if index == self.selected then self:append(self.cursor_style..self.cursor..self.selected_style)
@@ -53,7 +63,7 @@ function methods:format_line(index, item)
 end
 
 --refreshes the ass text using the contents of the list
-function methods:update_ass()
+function scroll_list:update_ass()
     self.ass.data = self.global_style
     self:format_header()
 
@@ -98,7 +108,7 @@ function methods:update_ass()
 end
 
 --moves the selector down the list
-function methods:scroll_down()
+function scroll_list:scroll_down()
     if self.selected < #self.list then
         self.selected = self.selected + 1
         self:update_ass()
@@ -109,7 +119,7 @@ function methods:scroll_down()
 end
 
 --moves the selector up the list
-function methods:scroll_up()
+function scroll_list:scroll_up()
     if self.selected > 1 then
         self.selected = self.selected - 1
         self:update_ass()
@@ -120,81 +130,69 @@ function methods:scroll_up()
 end
 
 --adds the forced keybinds
-function methods:add_keybinds()
+function scroll_list:add_keybinds()
     for _,v in ipairs(self.keybinds) do
         mp.add_forced_key_binding(v[1], 'dynamic/'..self.ass.id..'/'..v[2], v[3], v[4])
     end
 end
 
 --removes the forced keybinds
-function methods:remove_keybinds()
+function scroll_list:remove_keybinds()
     for _,v in ipairs(self.keybinds) do
         mp.remove_key_binding('dynamic/'..self.ass.id..'/'..v[2])
     end
 end
 
 --opens the list and sets the hidden flag
-function methods:open_list()
+function scroll_list:open_list()
     self.hidden = false
     if not self.flag_update then self.ass:update()
     else self.flag_update = false ; self:update_ass() end
 end
 
 --closes the list and sets the hidden flag
-function methods:close_list()
+function scroll_list:close_list()
     self.hidden = true
     self.ass:remove()
 end
 
 --modifiable function that opens the list
-function methods:open()
+function scroll_list:open()
     self:open_list()
     self:add_keybinds()
 end
 
 --modifiable function that closes the list
-function methods:close ()
+function scroll_list:close ()
     self:remove_keybinds()
     self:close_list()
 end
 
 --toggles the list
-function methods:toggle()
+function scroll_list:toggle()
     if self.hidden then self:open()
     else self:close() end
 end
 
 local metatable = {
-    __index = methods,
+    __index = scroll_list,
     __len = function(t) return #t.list end,
 }
 
 --creates a new list object
-function methods:new()
+function scroll_list:new()
     local vars
     vars = {
         ass = mp.create_osd_overlay('ass-events'),
         hidden = true,
         flag_update = true,
 
-        global_style = [[]],
-
         header = "header \\N ----------------------------------------------",
-        header_style = [[{\q2\fs35\c&00ccff&}]],
-
-        list = {},
-        list_style = [[{\q2\fs25\c&Hffffff&}]],
-        wrapper_style = [[{\c&00ccff&\fs16}]],
-
         cursor = [[➤\h]],
         indent = [[\h\h\h\h]],
-        cursor_style = [[{\c&00ccff&}]],
-        selected_style = [[{\c&Hfce788&}]],
 
-        num_entries = 16,
+        list = {},
         selected = 1,
-        wrap = false,
-        empty_text = "no entries",
 
         keybinds = {
             {'DOWN', 'scroll_down', function() vars:scroll_down() end, {repeatable = true}},
@@ -205,4 +203,4 @@ function methods:new()
     return setmetatable(vars, metatable)
 end
 
-return methods:new()
+return scroll_list:new()
