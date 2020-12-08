@@ -6,6 +6,10 @@ local scroll_list = {
     wrapper_style = [[{\c&00ccff&\fs16}]],
     cursor_style = [[{\c&00ccff&}]],
     selected_style = [[{\c&Hfce788&}]],
+
+    cursor = [[➤\h]],
+    indent = [[\h\h\h\h]],
+
     num_entries = 16,
     wrap = false,
     empty_text = "no entries"
@@ -188,8 +192,6 @@ function scroll_list:new()
         flag_update = true,
 
         header = "header \\N ----------------------------------------------",
-        cursor = [[➤\h]],
-        indent = [[\h\h\h\h]],
 
         list = {},
         selected = 1,
