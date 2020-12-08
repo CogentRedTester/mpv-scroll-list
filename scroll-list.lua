@@ -41,7 +41,7 @@ function methods:format_header()
 end
 
 --formats each line of the list and prints it to the overlay
-function methods:format_line(self, index, item)
+function methods:format_line(index, item)
     self:append(self.list_style)
 
     if index == self.selected then self:append(self.cursor_style..self.cursor..self.selected_style)
