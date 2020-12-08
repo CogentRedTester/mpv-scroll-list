@@ -178,8 +178,21 @@ function scroll_list:toggle()
     else self:close() end
 end
 
+--clears the list
+function scroll_list:clear()
+    self.list = {}
+end
+
 local metatable = {
-    __index = scroll_list,
+    __index = function(t, key)
+        if scroll_list[key] ~= nil then return scroll_list[key]
+        elseif type(key) == "number" then return t.list[key] end
+    end,
+    __newindex = function(t, key, value)
+        if type(key) == "number" then rawset(t.list, key, value)
+        else rawset(t, key, value) end
+    end,
+    __scroll_list = scroll_list,
     __len = function(t) return #t.list end,
 }
 
@@ -192,7 +205,6 @@ function scroll_list:new()
         flag_update = true,
 
         header = "header \\N ----------------------------------------------",
-
         list = {},
         selected = 1,
 
