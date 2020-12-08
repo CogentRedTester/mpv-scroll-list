@@ -171,7 +171,8 @@ local metatable = {
 
 --creates a new list object
 function methods:new()
-    local temp = {
+    local vars
+    vars = {
         ass = mp.create_osd_overlay('ass-events'),
         hidden = true,
         flag_update = true,
@@ -196,12 +197,12 @@ function methods:new()
         empty_text = "no entries",
 
         keybinds = {
-            {'DOWN', 'scroll_down', function() methods:scroll_down() end, {repeatable = true}},
-            {'UP', 'scroll_up', function() methods:scroll_up() end, {repeatable = true}},
-            {'ESC', 'close_browser', function() methods:close() end, {}}
+            {'DOWN', 'scroll_down', function() vars:scroll_down() end, {repeatable = true}},
+            {'UP', 'scroll_up', function() vars:scroll_up() end, {repeatable = true}},
+            {'ESC', 'close_browser', function() vars:close() end, {}}
         }
     }
-    return setmetatable(temp, metatable)
+    return setmetatable(vars, metatable)
 end
 
 return methods:new()
