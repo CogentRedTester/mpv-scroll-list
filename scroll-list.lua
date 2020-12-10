@@ -178,14 +178,29 @@ function scroll_list:toggle()
     else self:close() end
 end
 
---clears the list
+--clears the list in-place
 function scroll_list:clear()
-    self.list = {}
+    local i = 1
+    while self.list[i] do
+        self.list[i] = nil
+        i = i + 1
+    end
+end
+
+--added alias for ipairs(list.list) for lua 5.1
+function scroll_list:ipairs()
+    return ipairs(self.list)
+end
+
+--append item to the end of the list
+function scroll_list:insert(item)
+    self.list[#self.list] = item
 end
 
 local metatable = {
     __index = function(t, key)
         if scroll_list[key] ~= nil then return scroll_list[key]
+        elseif key == "__current" then return t.list[t.selected]
         elseif type(key) == "number" then return t.list[key] end
     end,
     __newindex = function(t, key, value)
@@ -194,6 +209,7 @@ local metatable = {
     end,
     __scroll_list = scroll_list,
     __len = function(t) return #t.list end,
+    __ipairs = function(t) return ipairs(t.list) end
 }
 
 --creates a new list object
