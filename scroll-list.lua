@@ -194,7 +194,7 @@ end
 
 --append item to the end of the list
 function scroll_list:insert(item)
-    self.list[#self.list] = item
+    self.list[#self.list + 1] = item
 end
 
 local metatable = {
