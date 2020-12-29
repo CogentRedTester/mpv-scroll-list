@@ -3,7 +3,7 @@
 This is an API to allow scripts to create interactive scrollable lists in mpv player.
 
 ## For Users
-Installing the script as a user is very simple, just place the `scroll-list.lua` file inside either the `~~/scripts` folder. Note that this only works with the `script-opt` commandline option, config files inside `~~/script-opts` will not work.
+Installing the script as a user is very simple, just place the `scroll-list.lua` file inside either the `~~/scripts` folder.
 
 For more advanced users you can also place the file into one of the lua package directories specified by the `LUA_PATH` environment variable.
 
