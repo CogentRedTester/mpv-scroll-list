@@ -8,8 +8,7 @@
 local mp = require 'mp'
 
 --adding the source directory to the package path and loading the module
-package.path = mp.command_native( {"expand-path", "~~/scripts" } ) .. "/?.lua;" .. package.path
-local list = require "scroll-list"
+local list = dofile(mp.command_native({"expand-path", "~~/scripts/scroll-list.lua"}))
 
 --modifying the list settings
 list.header = "Chapter List \\N ------------------------------------"

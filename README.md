@@ -13,11 +13,10 @@ For more advanced users you can also place the file into one of the lua package 
 Importing the module in such a way as to respect the above settings can be done with the following code:
 
 ```
-package.path = mp.command_native( {"expand-path", "~~/scripts" } ) .. "/?.lua;" .. package.path
-local list = require "scroll-list"
+local list = dofile(mp.command_native({"expand-path", "~~/scripts/scroll-list.lua"}))
 ```
 
-The list variable then contains a table that represents a single scroll-list object. A script can maintain multiple distinct lists by simply using `require 'scroll-list` again.
+The list variable then contains a table that represents a single scroll-list object.
 
 ### Conceptual Overview
 Each list object maintains a separate osd ass overlay, and has a suite of variables and methods to modify and control the overlay.
