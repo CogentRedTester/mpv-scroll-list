@@ -18,7 +18,7 @@ local scroll_list = {
 --formats strings for ass handling
 --this function is based on https://github.com/mpv-player/mpv/blob/master/player/lua/console.lua#L110
 function scroll_list.ass_escape(str)
-    str = str:gsub('.', {
+    str = str:gsub('[\\{}\n\\N] ?', {
         ['\\'] = '\\\239\187\191',
         ['{'] = '\\{',
         ['}'] = '\\}',
@@ -26,7 +26,7 @@ function scroll_list.ass_escape(str)
         -- consecutive newlines
         ['\n'] = '\239\187\191\\N',
         -- Turn leading spaces into hard spaces to prevent ASS from stripping them
-        ['\\N'] = '\\N\\h'
+        ['\\N '] = '\\N\\h'
     })
     str = str:gsub('^ ', '\\h')
     return str
