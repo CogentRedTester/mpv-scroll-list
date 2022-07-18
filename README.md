@@ -61,26 +61,32 @@ These methods must all be run using `object:function()` syntax so that they act 
 
 #### Methods meant to control the list overlay:
 
-| Method        | Description                                 |
-|---------------|---------------------------------------------|
-| open()        | opens the list                              |
-| close()       | closes the list                             |
-| toggle()      | toggles the list                            |
-| update()      | re-scan the list and update the osd overlay |
-| scroll_down() | move cursor down                            |
-| scroll_up()   | move cursor up                              |
+| Method          | Description                                 |
+|---------------  |---------------------------------------------|
+| open()          | opens the list                              |
+| close()         | closes the list                             |
+| toggle()        | toggles the list                            |
+| update()        | re-scan the list and update the osd overlay |
+| scroll_down()   | move cursor down                            |
+| scroll_up()     | move cursor up                              |
+| move_pagedown() | move cursor to next page                    |
+| move_pagedup()  | move cursor to previous page                |
+| move_begin()    | move cursor to begin                        |
+| move_end()      | move cursor to end                          |
 
 #### Methods designed to be replaceable for custom behaviour:
 Changing these can break the script if certain function calls are missing. Make sure to check the defaults.
 
-| Method                   | Description                                                                                                                    |
-|--------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| format_header()          | formats and prints the header to the overlay                                                                                   |
-| format_line(index, item) | formats the ass string for the given `item` at list position `index` - this handles the cursor, indents, styles and newlines.  |
-| open()                   | is called by `toggle` - runs the functions required when opening the list                                                      |
-| close()                  | is called by `toggle` - runs the functions required when closing the list                                                      |
+| Method                   | Description                                                  |
+| ------------------------ | ------------------------------------------------------------ |
+| format_header_string()   | format and return the header string - allows one to modify or substitute the header string on each redraw |
+| format_header()          | formats and prints the header to the overlay                 |
+| format_line(index, item) | formats the ass string for the given `item` at list position `index` - this handles the cursor, indents, styles and newlines. |
+| open()                   | is called by `toggle` - runs the functions required when opening the list |
+| close()                  | is called by `toggle` - runs the functions required when closing the list |
 
 #### Methods to support custom functions:
+
 Generally these shouldn't be changed.
 
 | Method            | Description                                                                        |
