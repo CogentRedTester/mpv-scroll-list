@@ -32,7 +32,8 @@ local o = {
 opts.read_options(o)
 
 --adding the source directory to the package path and loading the module
-local list = dofile(mp.command_native({"expand-path", "~~/script-modules/scroll-list.lua"}))
+package.path = mp.command_native({"expand-path", "~~/script-modules/?.lua;"})..package.path
+local list = require "scroll-list"
 
 --modifying the list settings
 local original_open = list.open
