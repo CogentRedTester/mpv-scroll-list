@@ -13,7 +13,8 @@ For more advanced users you can also place the file into one of the lua package 
 Importing the module in such a way as to respect the above settings can be done with the following code:
 
 ```
-local list = dofile(mp.command_native({"expand-path", "~~/script-modules/scroll-list.lua"}))
+package.path = mp.command_native({"expand-path", "~~/script-modules/?.lua;"})..package.path
+local list = require "scroll-list"
 ```
 
 The list variable then contains a table that represents a single scroll-list object.
