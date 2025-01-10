@@ -154,7 +154,7 @@ end
 
 --moves the selector to the list next page
 function scroll_list:move_pagedown()
-    if #self.list > self.num_entries then
+    if #self.list > 1 then
         self.selected = self.selected + self.num_entries
         if self.selected > #self.list then self.selected = #self.list end
         self:update_ass()
@@ -163,7 +163,7 @@ end
 
 --moves the selector to the list previous page
 function scroll_list:move_pageup()
-    if #self.list > self.num_entries then
+    if #self.list > 1 then
         self.selected = self.selected - self.num_entries
         if self.selected < 1 then self.selected = 1 end
         self:update_ass()
